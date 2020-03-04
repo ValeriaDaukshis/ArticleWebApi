@@ -11,7 +11,7 @@ namespace ArticleProject.Services.UserServices
     {
         public UserMapping()
         {
-            CreateMap<UpdateUserRequest, UserDTO>();
+            CreateMap<CreateUserRequest, UserDTO>();
             CreateMap<UserDTO, User>();
         }
     }

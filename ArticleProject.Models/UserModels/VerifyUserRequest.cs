@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArticleProject.Models
+namespace ArticleProject.Models.UserModels
 {
-    public class UpdateUserRequest
+    public class VerifyUserRequest
     {
-        public string Name { get; set; }
-
         public string Email { get; set; }
 
         public string Password { get; set; }

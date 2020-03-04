@@ -1,7 +1,6 @@
 ﻿using ArticleProject.DataAccess;
 using ArticleProject.DataAccess.ArticlesData;
 using ArticleProject.DataAccess.UsersData;
-using ArticleProject.Models;
 using ArticleProject.Models.ArticleModels;
 using AutoMapper;
 using MongoDB.Bson;
@@ -14,10 +13,10 @@ namespace ArticleProject.Services.ArticleService
 {
     public class ArticleService : IArticleService
     {
-        IArticleContext _context;
-        ICategoriesContext _categoryContext;
-        IUsersContext _userContext;
-        IMapper _mapper;
+        private readonly IArticleContext _context;
+        private readonly ICategoriesContext _categoryContext;
+        private readonly IUsersContext _userContext;
+        private readonly IMapper _mapper;
 
         public ArticleService(IArticleContext context, ICategoriesContext categoryContext, IUsersContext userContext, IMapper mapper)
         {
@@ -78,6 +77,18 @@ namespace ArticleProject.Services.ArticleService
         public async Task<IEnumerable<Article>> GetArticles()
         {
             var dbArticles = await _context.Articles.Find(_ => true).ToListAsync();
+            var articles = new List<Article>();
+            foreach (var art in dbArticles)
+            {
+                articles.Add(_mapper.Map<Article>(art));
+            }
+
+            return articles;
+        }
+
+        public async Task<IEnumerable<Article>> GetArticlesCategory(string categoryName)
+        {
+            var dbArticles = await _context.Articles.Find(c => c.Category.CategoryName == categoryName).ToListAsync();
             var articles = new List<Article>();
             foreach (var art in dbArticles)
             {

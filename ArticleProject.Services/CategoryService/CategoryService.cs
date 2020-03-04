@@ -11,8 +11,8 @@ namespace ArticleProject.Services
 {
     public class CategoryService : ICategoryService
     {
-        ICategoriesContext _context;
-        IMapper _mapper;
+        private readonly ICategoriesContext _context;
+        private readonly IMapper _mapper;
         public CategoryService(ICategoriesContext context, IMapper mapper)
         {
             _context = context;

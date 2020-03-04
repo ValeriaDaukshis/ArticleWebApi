@@ -1,0 +1,10 @@
+.aside-btn {
+    width: 200px;
+    float: right;
+}
+
+aside button{
+    font-size: large;
+    width: 150px;
+    text-align: center;
+}

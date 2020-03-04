@@ -7,6 +7,6 @@ namespace ArticleProject.Models.ArticleModels
         public string Title { get; set; }
         public string Description { get; set; }
         public UpdateCategoryRequest Category { get; set; }
-        public UpdateUserRequest User { get; set; }
+        public CreateUserRequest User { get; set; }
     }
 }

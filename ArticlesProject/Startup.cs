@@ -9,12 +9,17 @@ using ArticlesProject.DataAccess;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace ArticlesProject
 {
@@ -30,10 +35,10 @@ namespace ArticlesProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
             services.AddMvc().AddFluentValidation(fv => {
                 fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
             });
+            
             var mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new UserMapping());
@@ -50,7 +55,7 @@ namespace ArticlesProject
             services.AddTransient<IUsersContext, UsersContext>();
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IArticleContext, ArticleContext>();
-            services.AddTransient<IValidator<UpdateUserRequest>, UpdateUserRequestValidator>();
+            services.AddTransient<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
 
             services.AddSwaggerGen(c =>
             {
@@ -62,7 +67,32 @@ namespace ArticlesProject
                 options.ConnectionString = Configuration.GetSection("MongoConnection:ConnectionString").Value;
                 options.Database = Configuration.GetSection("MongoConnection:Database").Value;
             });
-            
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services.AddAuthentication(options =>
+            {
+                //Set default Authentication Schema as Bearer
+                options.DefaultAuthenticateScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme =
+                           JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters =
+                       new TokenValidationParameters
+                       {
+                           ValidIssuer = Configuration["JwtIssuer"],
+                           ValidAudience = Configuration["JwtIssuer"],
+                           IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                           ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                       };
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -71,23 +101,33 @@ namespace ArticlesProject
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
+
             app.UseSwagger();
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+            //app.UseHttpsRedirection();
+
+            app.UseRouting();
+            
+            app.UseCors(builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            
         }
+
+      
     }
 }

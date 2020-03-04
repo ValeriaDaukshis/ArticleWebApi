@@ -1,10 +1,11 @@
 ﻿using ArticleProject.DataAccess;
 using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models;
+using ArticleProject.Models.UserModels;
+using ArticleProject.Services.UserServices;
 using AutoMapper;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.GridFS;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,9 +13,8 @@ namespace ArticleProject.Services
 {
     public class UserService : IUserService
     {
-        IGridFSBucket gridFS;
-        IUsersContext _context;
-        IMapper _mapper;
+        private readonly IUsersContext _context;
+        private readonly IMapper _mapper;
         public UserService(IUsersContext context, IMapper mapper)
         {
             _context = context;
@@ -33,32 +33,48 @@ namespace ArticleProject.Services
             return users;
         }
         
-        public async Task<User> GetUser(string id)
+        public async Task<User> LogIn(VerifyUserRequest request)
         {
-            var dbUsers = await _context.Users.Find(new BsonDocument("_id", new ObjectId(id))).ToListAsync();
+            request.Password = Crypto.ComputeSha256Hash(request.Password);
+            var dbUsers = await _context.Users.Find(us=> us.Email == request.Email && us.Password == request.Password).ToListAsync();
             if (dbUsers.Count == 0)
             {
+                throw new System.Exception("Not correct login or password!");
                 //throw new RequestedResourceNotFoundException();
             }
 
             return _mapper.Map<UserDTO, User>(dbUsers[0]);
         }
 
-        public async Task<User> CreateUser(UpdateUserRequest createRequest)
+        public async Task<User> GetUser(string id)
         {
-            var dbUsers = await _context.Users.Find(h => h.Name == createRequest.Name).ToListAsync();
+            var dbUsers = await _context.Users.Find(us => us.Id == id).ToListAsync();
+            if (dbUsers.Count == 0)
+            {
+                throw new System.Exception();
+                //throw new RequestedResourceNotFoundException();
+            }
+
+            return _mapper.Map<UserDTO, User>(dbUsers[0]);
+        }
+
+        public async Task<User> CreateUser(CreateUserRequest createRequest)
+        {
+            createRequest.Password = Crypto.ComputeSha256Hash(createRequest.Password);
+            var dbUsers = await _context.Users.Find(us => us.Email == createRequest.Email && us.Password == createRequest.Password).ToListAsync();
+
             if (dbUsers.Count > 0)
             {
                 //throw new RequestedResourceHasConflictException("address");
             }
 
-            var dbUser = _mapper.Map<UpdateUserRequest, UserDTO>(createRequest);
+            var dbUser = _mapper.Map<CreateUserRequest, UserDTO>(createRequest);
             await _context.Users.InsertOneAsync(dbUser);
 
             return _mapper.Map<User>(dbUser);
         }
 
-        public async Task<User> UpdateUser(string id, UpdateUserRequest updateRequest)
+        public async Task<User> UpdateUser(string id, CreateUserRequest updateRequest)
         {
             var dbUsers = await _context.Users.Find(p => p.Name == updateRequest.Name && p.Id != id).ToListAsync();
             if (dbUsers.Count > 0)
@@ -97,28 +113,5 @@ namespace ArticleProject.Services
 
             await _context.Users.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }
-
-
-        //public async Task<byte[]> GetImage(string id)
-        //{
-        //    return await gridFS.DownloadAsBytesAsync(new ObjectId(id));
-        //}
-
-        //public async Task StoreImage(string id, Stream imageStream, string imageName)
-        //{
-        //    Product p = await GetProduct(id);
-        //    if (p.HasImage())
-        //    {
-
-        //        await gridFS.DeleteAsync(new ObjectId(p.ImageId));
-        //    }
-
-        //    ObjectId imageId = await gridFS.UploadFromStreamAsync(imageName, imageStream);
-
-        //    p.ImageId = imageId.ToString();
-        //    var filter = Builders<Product>.Filter.Eq("_id", new ObjectId(p.Id));
-        //    var update = Builders<Product>.Update.Set("ImageId", p.ImageId);
-        //    await Products.UpdateOneAsync(filter, update);
-        //}
     }
 }

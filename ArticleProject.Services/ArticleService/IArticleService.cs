@@ -1,5 +1,6 @@
 ﻿using ArticleProject.Models;
 using ArticleProject.Models.ArticleModels;
+using ArticleProject.Models.CategoryModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,5 +13,6 @@ namespace ArticleProject.Services.ArticleService
         Task<Article> CreateArticle(UpdateArticleRequest request);
         Task<Article> UpdateArticle(string id, UpdateArticleRequest request);
         Task RemoveArticle(string id);
+        Task<IEnumerable<Article>> GetArticlesCategory(string categoryName);
     }
 }

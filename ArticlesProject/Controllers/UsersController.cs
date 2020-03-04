@@ -1,7 +1,12 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Threading.Tasks;
 using ArticleProject.Models;
+using ArticleProject.Models.UserModels;
 using ArticleProject.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.Swagger.Annotations;
 
@@ -9,6 +14,7 @@ namespace ArticlesProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[EnableCors("AllowOrigin")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
@@ -35,7 +41,7 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a user by id.", Type = typeof(User))]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetUser(string id)
         {
             var user = await _service.GetUser(id);
@@ -43,12 +49,13 @@ namespace ArticlesProject.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("")]
         [SwaggerResponse(HttpStatusCode.Created, Description = "Creates a new user.")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddUser([FromBody] UpdateUserRequest createRequest)
+        public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -60,6 +67,28 @@ namespace ArticlesProject.Controllers
             return Created(location, category);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("{email}")]
+        [SwaggerResponse(HttpStatusCode.Created, Description = "Creates a new user.")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.Conflict)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> SingIn(string email, [FromBody] VerifyUserRequest createRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //var jwt = new JwtSecurityToken();
+            //return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+
+            var category = await _service.LogIn(createRequest);
+
+            return Ok(category);
+        }
+
         [HttpPut]
         [Route("{id}")]
         [SwaggerResponse(HttpStatusCode.NoContent, Description = "Updates an existed user.")]
@@ -67,7 +96,7 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> UpdateProductCategory(string id, [FromBody] UpdateUserRequest updateRequest)
+        public async Task<IActionResult> UpdateProductCategory(string id, [FromBody] CreateUserRequest updateRequest)
         {
             if (!ModelState.IsValid)
             {

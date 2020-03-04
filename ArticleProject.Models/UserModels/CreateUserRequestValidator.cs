@@ -1,13 +1,10 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ArticleProject.Models
 {
-    public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
+    public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
     {
-        public UpdateUserRequestValidator()
+        public CreateUserRequestValidator()
         {
             RuleFor(x => x.Name).Length(4, 60);
             RuleFor(x => x.Email).EmailAddress();

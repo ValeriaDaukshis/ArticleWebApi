@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ArticleProject.Models;
 using ArticleProject.Models.ArticleModels;
+using ArticleProject.Models.CategoryModels;
 using ArticleProject.Services;
 using ArticleProject.Services.ArticleService;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,18 @@ namespace ArticlesProject.Controllers
         public async Task<IActionResult> GetArticles()
         {
             var a = await _service.GetArticles();
+            return Ok(a);
+        }
+
+        [HttpGet]
+        [Route("category/{categoryName}")]
+        [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a list of articles.", Type = typeof(Article[]))]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+
+        public async Task<IActionResult> GetArticlesCategory(string categoryName)
+        {
+            var a = await _service.GetArticlesCategory(categoryName);
             return Ok(a);
         }
 
