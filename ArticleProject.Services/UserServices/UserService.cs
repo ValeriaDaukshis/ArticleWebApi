@@ -2,6 +2,7 @@
 using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
+using ArticleProject.Services.ExceptionClasses;
 using ArticleProject.Services.UserServices;
 using AutoMapper;
 using MongoDB.Bson;
@@ -35,12 +36,11 @@ namespace ArticleProject.Services
         
         public async Task<User> LogIn(VerifyUserRequest request)
         {
-            request.Password = Crypto.ComputeSha256Hash(request.Password);
+            //request.Password = Crypto.ComputeSha256Hash(request.Password);
             var dbUsers = await _context.Users.Find(us=> us.Email == request.Email && us.Password == request.Password).ToListAsync();
             if (dbUsers.Count == 0)
             {
-                throw new System.Exception("Not correct login or password!");
-                //throw new RequestedResourceNotFoundException();
+                throw new CreateFailedException();
             }
 
             return _mapper.Map<UserDTO, User>(dbUsers[0]);
@@ -51,8 +51,7 @@ namespace ArticleProject.Services
             var dbUsers = await _context.Users.Find(us => us.Id == id).ToListAsync();
             if (dbUsers.Count == 0)
             {
-                throw new System.Exception();
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("No user found");
             }
 
             return _mapper.Map<UserDTO, User>(dbUsers[0]);
@@ -60,12 +59,12 @@ namespace ArticleProject.Services
 
         public async Task<User> CreateUser(CreateUserRequest createRequest)
         {
-            createRequest.Password = Crypto.ComputeSha256Hash(createRequest.Password);
+            //createRequest.Password = Crypto.ComputeSha256Hash(createRequest.Password);
             var dbUsers = await _context.Users.Find(us => us.Email == createRequest.Email && us.Password == createRequest.Password).ToListAsync();
 
             if (dbUsers.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new UpdateFailedException();
             }
 
             var dbUser = _mapper.Map<CreateUserRequest, UserDTO>(createRequest);
@@ -76,16 +75,16 @@ namespace ArticleProject.Services
 
         public async Task<User> UpdateUser(string id, CreateUserRequest updateRequest)
         {
-            var dbUsers = await _context.Users.Find(p => p.Name == updateRequest.Name && p.Id != id).ToListAsync();
+            var dbUsers = await _context.Users.Find(p => p.Email == updateRequest.Email && p.Id != id).ToListAsync();
             if (dbUsers.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new UpdateFailedException("Change password");
             }
 
             dbUsers = _context.Users.Find(p => p.Id == id).ToList();
             if (dbUsers.Count == 0)
             {
-               // throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("No user found");
             }
 
             var dbUser = dbUsers[0];
@@ -102,14 +101,10 @@ namespace ArticleProject.Services
             var dbUsers = await _context.Users.Find(p => p.Id == id).ToListAsync();
             if (dbUsers.Count == 0)
             {
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("User not found");
             }
 
             var dbUser = dbUsers[0];
-            //if (dbCourier.IsDeleted == false)
-            //{
-            //   // throw new RequestedResourceHasConflictException();
-            //}
 
             await _context.Users.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }

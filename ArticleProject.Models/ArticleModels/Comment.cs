@@ -4,9 +4,12 @@ using System.Text;
 
 namespace ArticleProject.Models.ArticleModels
 {
-    public class CreateCommentRequest
+    public class Comment
     {
         public string UserName { get; set; }
+        
+        public DateTime CreatedDate { get; set; }
+        
         public string CommentText { get; set; }
     }
 }

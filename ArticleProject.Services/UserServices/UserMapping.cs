@@ -1,9 +1,6 @@
 ﻿using ArticleProject.DataAccess;
 using ArticleProject.Models;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ArticleProject.Services.UserServices
 {

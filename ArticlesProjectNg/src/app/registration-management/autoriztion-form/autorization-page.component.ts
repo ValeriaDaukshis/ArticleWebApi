@@ -39,4 +39,8 @@ export class AutorizationPageComponent implements OnInit {
     this.customerService.getCustomer(this.verifyUser).subscribe(c => this.navigateToCustomers);
     localStorage.setItem("registrate", JSON.stringify(this.user));
   }
+
+  singOut(){
+    localStorage.removeItem("registrate");
+  }
 }

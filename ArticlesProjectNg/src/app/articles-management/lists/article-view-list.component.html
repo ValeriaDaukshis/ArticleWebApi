@@ -11,19 +11,25 @@
     <form (ngSubmit)="onSubmit()" #commentForm="ngForm">
         
         <div class="form-group">
-          <label for="description" id="descriptionLabel">Article description</label>
-          <textarea type="text" class="form-control" id="description" aria-describedby="descriptionLabel" minlength="8" maxlength="2000" required [(ngModel)]="article.description"
-            name="description" #description="ngModel"></textarea>
-          <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert alert-danger">
-            <div *ngIf="description.errors.required">Article description is required.</div>
-            <div *ngIf="description.errors.minlength">Article description must be at least 8 characters long.</div>
+          <textarea type="text" class="form-control" id="commentText" aria-describedby="commentTextLabel" minlength="8" maxlength="200" required [(ngModel)]="comment.commentText"
+            name="commentText" #commentText="ngModel"></textarea>
+          <div *ngIf="commentText.invalid && (commentText.dirty || commentText.touched)" class="alert alert-danger">
+            <div *ngIf="commentText.errors.required"> commentText is required.</div>
+            <div *ngIf="commentText.errors.minlength"> commentText must be at least 8 characters long.</div>
           </div>
         </div>
         
-        <div class="btn-group mr-2" role="group" aria-label="Save group" *ngIf='existed' (click)="onSubmit(article)">
+        <div class="btn-group mr-2" role="group" aria-label="Save group" *ngIf='existed' (click)="onSubmit(comment, article.id)">
             <button type="button" class="btn btn-primary">Save</button>
         </div>
       </form>
+
+      <div *ngFor = "let comment of article.commentList">
+        <p>{{comment.user}}</p>
+        <p>{{comment.createdDate}}</p>
+        <p>{{comment.commentText}}</p>
+        <hr>
+    </div>
     
 </div>
   

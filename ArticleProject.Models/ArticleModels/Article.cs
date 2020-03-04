@@ -13,5 +13,7 @@ namespace ArticleProject.Models.ArticleModels
         public Category Category { get; set; }
 
         public User User { get; set; }
+
+        public Comment[] Comments { get; set; }
     }
 }

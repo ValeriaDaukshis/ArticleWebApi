@@ -25,5 +25,9 @@ namespace ArticleProject.DataAccess.ArticlesData
 
         [BsonElement("category")]
         public CategoryDTO Category { get; set; }
+
+        [BsonElement("comments")]
+        public UserComments[] Comments { get; set; }
+
     }
 }

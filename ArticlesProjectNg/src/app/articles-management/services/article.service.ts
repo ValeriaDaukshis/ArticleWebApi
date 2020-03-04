@@ -4,7 +4,7 @@ import { environment } from 'environments/environment';
 import { Observable, onErrorResumeNext } from 'rxjs';
 import { Article } from '../models/article';
 import { Category } from "../models/category";
-import { Comment } from "../models/comment";
+import { UserComment } from "../models/comment";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class ArticleService {
 
   constructor(private http: HttpClient) { }
 
-  getCustomers(): Observable<Array<Article>> {
+  getArticles(): Observable<Array<Article>> {
     return this.http.get<Array<Article>>(this.articleUrl);
   }
 
@@ -24,7 +24,7 @@ export class ArticleService {
     return this.http.get<Array<Category>>(this.categoryUrl);
   }
 
-  getCustomer(customerId: string): Observable<Article> {
+  getArticle(customerId: string): Observable<Article> {
     return this.http.get<Article>(`${this.articleUrl}${customerId}`);
   }
 
@@ -32,11 +32,11 @@ export class ArticleService {
     return this.http.get<Array<Article>>(`${this.categoryTypeUrl}${name}`);
   }
 
-  addCustomer(customer: Article) : Observable<Article> {
+  addArticle(customer: Article) : Observable<Article> {
     return this.http.post<Article>(`${this.articleUrl}`, customer);
   }
 
-  addComment(comment: Comment) : Observable<Comment>{
-    return this.http.post<Comment>(`${this.articleUrl}`, comment);
+  addComment(comment: UserComment, id: string) : Observable<UserComment>{
+    return this.http.post<UserComment>(`${this.articleUrl}${id}/comment`, comment);
   }
 }

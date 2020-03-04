@@ -133,6 +133,7 @@ namespace ArticleProject.Services.ArticleService
             var dbUser = await _userContext.Users.Find(c => c.Name == updateRequest.User.Name && c.Email == updateRequest.User.Email && c.Password == updateRequest.User.Password).FirstOrDefaultAsync();
 
             dbArticles = _context.Articles.Find(p => p.Id == id).ToList();
+
             if (dbArticles.Count == 0)
             {
                 // throw new RequestedResourceNotFoundException();
@@ -157,6 +158,24 @@ namespace ArticleProject.Services.ArticleService
             await _context.Articles.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(id)), dbArticle);
 
             return _mapper.Map<Article>(dbArticle);
+        }
+
+        public async Task CreateArticleComment(string id, CreateCommentRequest createRequest)
+        {
+            if (createRequest.UserName is null)
+            {
+                throw new ArgumentException("No user");
+            }
+
+            var dbArticle = _mapper.Map<CreateCommentRequest, UserComments>(createRequest);
+
+            var filter = Builders<ArticleDTO>
+             .Filter.Eq(e => e.Id, id);
+
+            var update = Builders<ArticleDTO>.Update
+                    .Push<UserComments>(e => e.Comments, dbArticle);
+
+            await _context.Articles.FindOneAndUpdateAsync(filter, update);
         }
 
         private string GetCategoryId(string name)

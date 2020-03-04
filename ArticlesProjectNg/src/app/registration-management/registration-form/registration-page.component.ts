@@ -37,4 +37,8 @@ export class RegistrationPageComponent implements OnInit {
        this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize);
   }
 
+  singOut(){
+    localStorage.removeItem("registrate");
+  }
+
 }

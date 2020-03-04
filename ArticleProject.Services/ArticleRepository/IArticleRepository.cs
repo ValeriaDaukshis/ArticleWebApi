@@ -1,12 +1,10 @@
-﻿using ArticleProject.Models;
-using ArticleProject.Models.ArticleModels;
-using ArticleProject.Models.CategoryModels;
+﻿using ArticleProject.Models.ArticleModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ArticleProject.Services.ArticleService
+namespace ArticleProject.Services.ArticleRepository
 {
-    public interface IArticleService
+    public interface  IArticleRepository
     {
         Task<IEnumerable<Article>> GetArticles();
         Task<Article> GetArticle(string id);

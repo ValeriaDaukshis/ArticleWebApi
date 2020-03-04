@@ -1,4 +1,5 @@
 ﻿using ArticleProject.Models.CategoryModels;
+using System;
 
 namespace ArticleProject.Models.ArticleModels
 {
@@ -8,5 +9,6 @@ namespace ArticleProject.Models.ArticleModels
         public string Description { get; set; }
         public UpdateCategoryRequest Category { get; set; }
         public CreateUserRequest User { get; set; }
+        public CreateCommentRequest[] Comments => Array.Empty<CreateCommentRequest>();
     }
 }

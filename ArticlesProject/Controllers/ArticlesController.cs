@@ -76,6 +76,24 @@ namespace ArticlesProject.Controllers
         }
 
         [HttpPut]
+        [Route("{id}/comment")]
+        [SwaggerResponse(HttpStatusCode.NoContent, Description = "Create comment.")]
+        [SwaggerResponse(HttpStatusCode.BadRequest)]
+        [SwaggerResponse(HttpStatusCode.Conflict)]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> CreateArticleComment(string id, [FromBody] CreateCommentRequest updateRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _service.CreateArticleComment(id, updateRequest);
+            return NoContent();
+        }
+
+        [HttpPut]
         [Route("{id}")]
         [SwaggerResponse(HttpStatusCode.NoContent, Description = "Updates an existed article.")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]

@@ -12,7 +12,7 @@ import { Category } from "../models/category";
 
 export class ArticleFormComponent implements OnInit {
 
-  article = new Article("", "", "", "", null, new Category("", ""));
+  article = new Article("", "", "", "", null, new Category("", ""),[]);
   categories: Category[];
 
   constructor(
@@ -36,6 +36,6 @@ export class ArticleFormComponent implements OnInit {
   }
   
   onSubmit(customer: Article) {
-    this.customerService.addCustomer(customer).subscribe(c => this.navigateToCustomers);
+    this.customerService.addArticle(customer).subscribe(c => this.navigateToCustomers);
   }
 }

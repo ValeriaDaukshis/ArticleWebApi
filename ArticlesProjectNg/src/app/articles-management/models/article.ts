@@ -1,5 +1,6 @@
 import { User } from "app/registration-management/user";
 import { Category } from "./category";
+import { UserCommentList } from "./comment-list";
 
 export class Article {
     constructor(
@@ -9,5 +10,6 @@ export class Article {
         public description: string,
         public user: User,
         public category: Category,
+        public commentList: UserCommentList[],
     ) { }
 }

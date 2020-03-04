@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
@@ -14,7 +13,6 @@ namespace ArticlesProject.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[EnableCors("AllowOrigin")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _service;
@@ -74,15 +72,12 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> SingIn(string email, [FromBody] VerifyUserRequest createRequest)
+        public async Task<IActionResult> LogIn(string email, [FromBody] VerifyUserRequest createRequest)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            //var jwt = new JwtSecurityToken();
-            //return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
 
             var category = await _service.LogIn(createRequest);
 
@@ -96,7 +91,7 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> UpdateProductCategory(string id, [FromBody] CreateUserRequest updateRequest)
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] CreateUserRequest updateRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +109,7 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> DeleteProductCategory(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             await _service.RemoveUser(id);
             return NoContent();
