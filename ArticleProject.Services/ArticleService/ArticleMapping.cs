@@ -12,6 +12,8 @@ namespace ArticleProject.Services.ArticleService
             CreateMap<UpdateArticleRequest, ArticleDTO>()
                 .ForMember(r => r.CreatedDate, opt => opt.MapFrom(p => DateTime.UtcNow));
             CreateMap<ArticleDTO, Article>();
+            CreateMap<CreateCommentRequest, UserComments>()
+                .ForMember(r => r.CreatedDate, opt => opt.MapFrom(p => DateTime.UtcNow));
         }
     }
 }
