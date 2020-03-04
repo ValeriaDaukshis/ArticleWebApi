@@ -3,7 +3,10 @@ using ArticleProject.DataAccess.ArticlesData;
 using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models;
 using ArticleProject.Services;
+using ArticleProject.Services.ArticleRepository;
 using ArticleProject.Services.ArticleService;
+using ArticleProject.Services.CategoryRepository;
+using ArticleProject.Services.UserRepository;
 using ArticleProject.Services.UserServices;
 using ArticlesProject.DataAccess;
 using AutoMapper;
@@ -56,6 +59,10 @@ namespace ArticlesProject
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IArticleContext, ArticleContext>();
             services.AddTransient<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
+
+            services.AddTransient<IArticleRepository, ArticleRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddSwaggerGen(c =>
             {

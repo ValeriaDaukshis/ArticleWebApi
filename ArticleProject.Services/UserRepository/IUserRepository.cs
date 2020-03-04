@@ -3,9 +3,9 @@ using ArticleProject.Models.UserModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ArticleProject.Services
+namespace ArticleProject.Services.UserRepository
 {
-    public interface IUserService
+    public interface IUserRepository
     {
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUser(string request);
