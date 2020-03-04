@@ -13,4 +13,9 @@
     <ProjectReference Include="..\ArticleProject.Models\ArticleProject.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CategoryRepository\" />
+    <Folder Include="UserRepository\" />
+  </ItemGroup>
+
 </Project>

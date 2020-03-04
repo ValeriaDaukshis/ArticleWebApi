@@ -40,7 +40,7 @@ namespace ArticleProject.Services
             var dbUsers = await _context.Users.Find(us=> us.Email == request.Email && us.Password == request.Password).ToListAsync();
             if (dbUsers.Count == 0)
             {
-                throw new CreateFailedException();
+                throw new CreateFailedException("Create failed. Change email");
             }
 
             return _mapper.Map<UserDTO, User>(dbUsers[0]);
@@ -64,7 +64,7 @@ namespace ArticleProject.Services
 
             if (dbUsers.Count > 0)
             {
-                throw new UpdateFailedException();
+                throw new RequestedResourceHasConflictException("Create failed. Change email");
             }
 
             var dbUser = _mapper.Map<CreateUserRequest, UserDTO>(createRequest);
@@ -78,7 +78,7 @@ namespace ArticleProject.Services
             var dbUsers = await _context.Users.Find(p => p.Email == updateRequest.Email && p.Id != id).ToListAsync();
             if (dbUsers.Count > 0)
             {
-                throw new UpdateFailedException("Change password");
+                throw new RequestedResourceHasConflictException("Change password");
             }
 
             dbUsers = _context.Users.Find(p => p.Id == id).ToList();

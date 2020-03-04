@@ -27,4 +27,12 @@ namespace ArticleProject.Services.ExceptionClasses
         {
         }
     }
+
+    public class RequestedResourceHasConflictException : Exception
+    {
+        public RequestedResourceHasConflictException(string message)
+        : base(message)
+        {
+        }
+    }
 }

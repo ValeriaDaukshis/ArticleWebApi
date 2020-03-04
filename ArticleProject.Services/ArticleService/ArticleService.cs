@@ -2,6 +2,7 @@
 using ArticleProject.DataAccess.ArticlesData;
 using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models.ArticleModels;
+using ArticleProject.Services.ExceptionClasses;
 using AutoMapper;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -41,17 +42,17 @@ namespace ArticleProject.Services.ArticleService
 
             if (dbArticles.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new RequestedResourceHasConflictException("address");
             }
 
             if (dbUser is null)
             {
-                throw new ArgumentException("No user");
+                throw new NotFoundItemException("User not found");
             }
 
             if (dbCategory is null)
             {
-                throw new ArgumentException("No category");
+                throw new NotFoundItemException("Category not found");
             }
 
             var dbArticle = _mapper.Map<UpdateArticleRequest, ArticleDTO>(createRequest);
@@ -68,7 +69,7 @@ namespace ArticleProject.Services.ArticleService
             var dbArticles = await _context.Articles.Find(new BsonDocument("_id", new ObjectId(id))).ToListAsync();
             if (dbArticles.Count == 0)
             {
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Article not found");
             }
 
             return _mapper.Map<ArticleDTO, Article>(dbArticles[0]);
@@ -103,14 +104,10 @@ namespace ArticleProject.Services.ArticleService
             var dbArticles = await _context.Articles.Find(p => p.Id == id).ToListAsync();
             if (dbArticles.Count == 0)
             {
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Article not found");
             }
 
             var dbArticle = dbArticles[0];
-            //if (dbCourier.IsDeleted == false)
-            //{
-            //   // throw new RequestedResourceHasConflictException();
-            //}
 
             await _context.Articles.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }
@@ -125,7 +122,7 @@ namespace ArticleProject.Services.ArticleService
             var dbArticles = await _context.Articles.Find(p => p.Title == updateRequest.Title && p.Id != id).ToListAsync();
             if (dbArticles.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new RequestedResourceHasConflictException("address");
             }
             //!!!!!!!!!!!!!!!!!!
             // look here if smth wrong
@@ -136,17 +133,17 @@ namespace ArticleProject.Services.ArticleService
 
             if (dbArticles.Count == 0)
             {
-                // throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Article not found");
             }
 
             if (dbUser is null)
             {
-                throw new ArgumentException("No user");
+                throw new NotFoundItemException("User not found");
             }
 
             if (dbCategory is null)
             {
-                throw new ArgumentException("No category");
+                throw new NotFoundItemException("Category not found");
             }
 
             var dbArticle = dbArticles[0];
@@ -164,7 +161,7 @@ namespace ArticleProject.Services.ArticleService
         {
             if (createRequest.UserName is null)
             {
-                throw new ArgumentException("No user");
+                throw new NotFoundItemException("User not found");
             }
 
             var dbArticle = _mapper.Map<CreateCommentRequest, UserComments>(createRequest);

@@ -1,6 +1,7 @@
 ﻿using ArticleProject.DataAccess;
 using ArticleProject.Models;
 using ArticleProject.Models.CategoryModels;
+using ArticleProject.Services.ExceptionClasses;
 using AutoMapper;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -24,7 +25,7 @@ namespace ArticleProject.Services
             var dbCategories = await _context.Categories.Find(h => h.CategoryName == createRequest.CategoryName).ToListAsync();
             if (dbCategories.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new CreateFailedException("Create category failed. Change category name");
             }
 
             var dbCategory = _mapper.Map<UpdateCategoryRequest, CategoryDTO>(createRequest);
@@ -51,7 +52,7 @@ namespace ArticleProject.Services
             var dbCategory = await _context.Categories.Find(new BsonDocument("_id", new ObjectId(id))).ToListAsync();
             if (dbCategory.Count == 0)
             {
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Category not found");
             }
 
             return _mapper.Map<CategoryDTO, Category>(dbCategory[0]);
@@ -62,14 +63,10 @@ namespace ArticleProject.Services
             var dbcategories = await _context.Categories.Find(p => p.Id == id).ToListAsync();
             if (dbcategories.Count == 0)
             {
-                //throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Category not found");
             }
 
             var dbcategory = dbcategories[0];
-            //if (dbCourier.IsDeleted == false)
-            //{
-            //   // throw new RequestedResourceHasConflictException();
-            //}
 
             await _context.Categories.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }
@@ -79,13 +76,13 @@ namespace ArticleProject.Services
             var dbCategories = await _context.Categories.Find(p => p.CategoryName == updateRequest.CategoryName && p.Id != id).ToListAsync();
             if (dbCategories.Count > 0)
             {
-                //throw new RequestedResourceHasConflictException("address");
+                throw new RequestedResourceHasConflictException("address");
             }
 
             dbCategories = _context.Categories.Find(p => p.Id == id).ToList();
             if (dbCategories.Count == 0)
             {
-                // throw new RequestedResourceNotFoundException();
+                throw new NotFoundItemException("Category not found");
             }
 
             var dbCategory = dbCategories[0];
