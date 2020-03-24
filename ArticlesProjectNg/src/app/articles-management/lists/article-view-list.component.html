@@ -2,12 +2,15 @@
     <div class = "main-text">
         <h3>{{article.title}}</h3>
     <hr>
-    <p>{{article.createdDate}}</p>
     <p>Author: {{article.user.name}}</p>
     <p>Category: {{article.category.categoryName}}</p>
     <hr>
     <p>{{article.description}}</p>
     </div>
+    <div class="btn-group mr-2 mb-4" role="group" aria-label="Back group" (click)="onCancel()">
+      <button routerLink="/articles" class="btn btn-primary">Back</button>
+    </div>
+    <h4>Create comment</h4>
     <form (ngSubmit)="onSubmit()" #commentForm="ngForm">
         
         <div class="form-group">
@@ -23,14 +26,14 @@
             <button type="button" class="btn btn-primary">Save</button>
         </div>
       </form>
+      <hr>
 
-      <div *ngFor = "let comment of article.commentList">
-        <p>{{comment.user}}</p>
+      <div *ngFor = "let comment of commentList" >
+        <p>{{comment.userName}}</p>
         <p>{{comment.createdDate}}</p>
         <p>{{comment.commentText}}</p>
         <hr>
     </div>
-    
 </div>
   
   

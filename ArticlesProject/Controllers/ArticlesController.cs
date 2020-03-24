@@ -54,6 +54,18 @@ namespace ArticlesProject.Controllers
             return Ok(article);
         }
 
+        [HttpGet]
+        [Route("{id}/comments")]
+        [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a article by id.", Type = typeof(Article))]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+
+        public async Task<IActionResult> GetArticleComments(string id)
+        {
+            var comments = await _service.GetArticleComments(id);
+            return Ok(comments);
+        }
+
         [HttpPost]
         [Route("")]
         [SwaggerResponse(HttpStatusCode.Created, Description = "Creates a new user.")]
@@ -72,12 +84,11 @@ namespace ArticlesProject.Controllers
             return Created(location, category);
         }
 
-        [HttpPut]
-        [Route("{id}/comment")]
-        [SwaggerResponse(HttpStatusCode.NoContent, Description = "Create comment.")]
+        [HttpPost]
+        [Route("{id}")]
+        [SwaggerResponse(HttpStatusCode.Created, Description = "Creates a new user.")]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.Conflict)]
-        [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> CreateArticleComment(string id, [FromBody] CreateCommentRequest updateRequest)
         {
@@ -86,8 +97,9 @@ namespace ArticlesProject.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _service.CreateArticleComment(id, updateRequest);
-            return NoContent();
+            var comment = await _service.CreateArticleComment(id, updateRequest);
+            var location = string.Format("/api/articles/{0}", id);
+            return Created(location, comment);
         }
 
         [HttpPut]

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
@@ -60,9 +61,9 @@ namespace ArticlesProject.Controllers
                 return BadRequest(ModelState);
             }
 
-            var category = await _service.CreateUser(createRequest);
-            var location = string.Format("/api/users/{0}", category.Id);
-            return Created(location, category);
+            var user = await _service.CreateUser(createRequest);
+            var location = string.Format("/api/users/{0}", user.Id);
+            return Created(location, user);
         }
 
         [HttpPost]
@@ -79,9 +80,9 @@ namespace ArticlesProject.Controllers
                 return BadRequest(ModelState);
             }
 
-            var category = await _service.LogIn(createRequest);
+            var user = await _service.LogIn(createRequest);
 
-            return Ok(category);
+            return Ok(user);
         }
 
         [HttpPut]

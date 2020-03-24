@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../user.service';
-import { User } from '../user';
+import { UserService } from '../services/user.service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-customer-form',
@@ -36,9 +36,4 @@ export class RegistrationPageComponent implements OnInit {
   onRegistrate(user: User) {
        this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize);
   }
-
-  singOut(){
-    localStorage.removeItem("registrate");
-  }
-
 }

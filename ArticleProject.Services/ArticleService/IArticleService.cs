@@ -14,6 +14,7 @@ namespace ArticleProject.Services.ArticleService
         Task<Article> UpdateArticle(string id, UpdateArticleRequest request);
         Task RemoveArticle(string id);
         Task<IEnumerable<Article>> GetArticlesCategory(string categoryName);
-        Task CreateArticleComment(string id, CreateCommentRequest createRequest);
+        Task<Comment> CreateArticleComment(string id, CreateCommentRequest createRequest);
+        Task<IEnumerable<Comment>> GetArticleComments(string id);
     }
 }

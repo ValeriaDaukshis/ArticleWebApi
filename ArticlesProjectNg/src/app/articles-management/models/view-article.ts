@@ -1,12 +1,12 @@
-import { UserCommentList } from "./comment-list";
-import { User } from "app/registration-management/user";
+import { UserComment } from "./user-comment";
+import { User } from "app/registration-management/models/user";
 
 export class ViewArticle {
     constructor(
-        public id: string,
+        public id: object,
         public title: string,
         public createdDate: string,
         public description: string,
-        public commentList: UserCommentList[],
+        public commentList: UserComment[],
     ) { }
 }

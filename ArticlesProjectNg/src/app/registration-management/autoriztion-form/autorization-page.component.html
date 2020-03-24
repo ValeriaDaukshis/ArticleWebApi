@@ -19,17 +19,11 @@
           <div *ngIf="password.errors.minlength">Password must be at least 8 characters long.</div>
         </div>
       </div>
-      <div class="btn-group mr-2" role="group" aria-label="Back group" (click)="onCancel()">
-        <button routerLink="/articles" class="btn btn-primary">Back</button>
-      </div>
-      <div class="btn-group mr-2" role="group" aria-label="Save group" (click)="onAutorize(user)">
+      <div class="btn-group mr-2" role="group" aria-label="Save group" (click)="logIn(user)">
           <button type="button" class="btn btn-primary">Autorize</button>
       </div>
       <div class="btn-group mr-2" role="group" aria-label="Save group">
         <button routerLink="/registration" class="btn btn-primary">Registration</button>
-      </div>
-      <div class="btn-group mr-2" role="group" aria-label="Save group" (click)="singOut()">
-        <button type="button" class="btn btn-primary">Sing Out</button>
       </div>
     </form>
   </div>

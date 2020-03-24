@@ -43,9 +43,14 @@ namespace ArticleProject.Services.ArticleService
             return await _repository.UpdateArticle(id, updateRequest);
         }
 
-        public async Task CreateArticleComment(string id, CreateCommentRequest createRequest)
+        public async Task<Comment> CreateArticleComment(string id, CreateCommentRequest createRequest)
         {
-            await _repository.CreateArticleComment(id, createRequest);
+            return await _repository.CreateArticleComment(id, createRequest);
+        }
+
+        public async Task<IEnumerable<Comment>> GetArticleComments(string id)
+        {
+            return await _repository.GetArticleComments(id);
         }
     }
 }

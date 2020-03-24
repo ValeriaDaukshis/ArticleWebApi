@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from '../services/article.service';
 import { Article } from '../models/article';
-import { User } from "app/registration-management/user";
+import { User } from "app/registration-management/models/user";
 import { Category } from "../models/category";
 import {AutorizationPageComponent} from "app/registration-management/autoriztion-form/autorization-page.component";
 
@@ -20,25 +20,25 @@ export class ArticleListComponent implements OnInit {
   existed = false;
 
   constructor(
-      private customerService: ArticleService,
+      private articleService: ArticleService,
       private aurizationPage: AutorizationPageComponent,
       ) { }
 
     ngOnInit() {
-        var item = localStorage.getItem("registrate");
+      var item = localStorage.getItem("registrate");
       if ( item !== null) {
           this.existed = true;
           this.user = JSON.parse(item);
         }
-        this.showAll();
+      this.showAll();
     }
 
     showAll(){
-        this.customerService.getArticles().subscribe(h => this.articles = h);
-        this.customerService.getCategories().subscribe(h => this.categories = h);
+        this.articleService.getArticles().subscribe(h => this.articles = h);
+        this.articleService.getCategories().subscribe(h => this.categories = h);
     }
 
     getCategory(name: string){
-        this.customerService.getCategory(name).subscribe(h => this.articles = h);
+        this.articleService.getCategory(name).subscribe(h => this.articles = h);
     }
 }

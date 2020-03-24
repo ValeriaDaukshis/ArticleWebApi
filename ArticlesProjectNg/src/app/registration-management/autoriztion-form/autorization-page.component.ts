@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../user.service';
-import { VerifyUser } from '../verifyUser';
-import { User } from '../user';
+import { UserService } from '../services/user.service';
+import { VerifyUser } from '../models/verifyUser';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-customer-form',
@@ -26,21 +26,22 @@ export class AutorizationPageComponent implements OnInit {
     this.isLoggedIn = false;
   }
 
-  navigateToCustomers() {
+  navigateToArticles() {
     this.router.navigate(['/articles']);
   }
 
   onCancel() {
-    this.navigateToCustomers();
+    this.navigateToArticles();
   }
 
-  onAutorize(customer: User) {
+  logIn(customer: User) {
     this.verifyUser = new VerifyUser(customer.email, customer.password);
-    this.customerService.getCustomer(this.verifyUser).subscribe(c => this.navigateToCustomers);
-    localStorage.setItem("registrate", JSON.stringify(this.user));
+    this.customerService.getUser(this.verifyUser).subscribe(c => this.setToStorage(c));
   }
 
-  singOut(){
-    localStorage.removeItem("registrate");
+  setToStorage(c: User){
+    this.user = c;
+    localStorage.setItem("registrate", JSON.stringify(this.user));
+    this.navigateToArticles();
   }
 }

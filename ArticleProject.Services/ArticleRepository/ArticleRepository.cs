@@ -76,6 +76,13 @@ namespace ArticleProject.Services.ArticleRepository
             return _mapper.Map<ArticleDTO, Article>(dbArticles[0]);
         }
 
+        public async Task<IEnumerable<Comment>> GetArticleComments(string id)
+        {
+            var article = await GetArticle(id);
+
+            return article.Comments;
+        }
+
         public async Task<IEnumerable<Article>> GetArticles()
         {
             var dbArticles = await _context.Articles.Find(_ => true).ToListAsync();
@@ -158,7 +165,7 @@ namespace ArticleProject.Services.ArticleRepository
             return _mapper.Map<Article>(dbArticle);
         }
 
-        public async Task CreateArticleComment(string id, CreateCommentRequest createRequest)
+        public async Task<Comment> CreateArticleComment(string id, CreateCommentRequest createRequest)
         {
             if (createRequest.UserName is null)
             {
@@ -174,6 +181,9 @@ namespace ArticleProject.Services.ArticleRepository
                     .Push<UserComments>(e => e.Comments, dbArticle);
 
             await _context.Articles.FindOneAndUpdateAsync(filter, update);
+
+            var a = _mapper.Map<Comment>(dbArticle);
+            return a;
         }
 
         private string GetCategoryId(string name)
