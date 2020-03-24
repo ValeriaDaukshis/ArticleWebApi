@@ -34,7 +34,7 @@ export class ArticleListComponent implements OnInit {
     }
 
     showAll(){
-        this.customerService.getCustomers().subscribe(h => this.articles = h);
+        this.customerService.getArticles().subscribe(h => this.articles = h);
         this.customerService.getCategories().subscribe(h => this.categories = h);
     }
 

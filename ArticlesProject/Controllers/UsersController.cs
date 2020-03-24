@@ -30,8 +30,8 @@ namespace ArticlesProject.Controllers
 
         public async Task<IActionResult> GetUsers()
         {
-            var a =  await _service.GetUsers();
-            return Ok(a);
+            var users =  await _service.GetUsers();
+            return Ok(users);
         }
 
         [HttpGet]
@@ -114,17 +114,5 @@ namespace ArticlesProject.Controllers
             await _service.RemoveUser(id);
             return NoContent();
         }
-
-        //[HttpPut]
-        //[Route("{id:int:min(1)}/status/{deletedStatus:bool}")]
-        //[SwaggerResponse(HttpStatusCode.NoContent, Description = "Sets deleted status for an existed product category.")]
-        //[SwaggerResponse(HttpStatusCode.NotFound)]
-        //[SwaggerResponse(HttpStatusCode.InternalServerError)]
-        //public async Task<IActionResult> SetStatus(int id, bool deletedStatus)
-        //{
-        //    await _service.SetStatusAsync(id, deletedStatus);
-        //    return HttpResponseMessage(Request.CreateResponse(HttpStatusCode.NoContent));
-        //}
-
     }
 }

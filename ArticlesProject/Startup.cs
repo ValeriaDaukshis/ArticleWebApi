@@ -96,10 +96,9 @@ namespace ArticlesProject
                            ValidAudience = Configuration["JwtIssuer"],
                            IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                           ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                           ClockSkew = TimeSpan.Zero
                        };
             });
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -130,7 +129,5 @@ namespace ArticlesProject
             });
             
         }
-
-      
     }
 }

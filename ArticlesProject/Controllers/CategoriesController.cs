@@ -26,8 +26,8 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get()
         {
-            var a = await _service.GetCategories();
-            return Ok(a);
+            var categories = await _service.GetCategories();
+            return Ok(categories);
         }
 
         [HttpGet]
@@ -37,8 +37,8 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get(string id)
         {
-            var a = await _service.GetCategory(id);
-            return Ok(a);
+            var category = await _service.GetCategory(id);
+            return Ok(category);
         }
 
         [HttpPost]

@@ -1,9 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using ArticleProject.Models;
 using ArticleProject.Models.ArticleModels;
-using ArticleProject.Models.CategoryModels;
-using ArticleProject.Services;
 using ArticleProject.Services.ArticleService;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.Swagger.Annotations;
@@ -29,8 +26,8 @@ namespace ArticlesProject.Controllers
 
         public async Task<IActionResult> GetArticles()
         {
-            var a = await _service.GetArticles();
-            return Ok(a);
+            var articles = await _service.GetArticles();
+            return Ok(articles);
         }
 
         [HttpGet]
@@ -41,8 +38,8 @@ namespace ArticlesProject.Controllers
 
         public async Task<IActionResult> GetArticlesCategory(string categoryName)
         {
-            var a = await _service.GetArticlesCategory(categoryName);
-            return Ok(a);
+            var article = await _service.GetArticlesCategory(categoryName);
+            return Ok(article);
         }
 
         [HttpGet]
@@ -53,8 +50,8 @@ namespace ArticlesProject.Controllers
 
         public async Task<IActionResult> GetArticle(string id)
         {
-            var user = await _service.GetArticle(id);
-            return Ok(user);
+            var article = await _service.GetArticle(id);
+            return Ok(article);
         }
 
         [HttpPost]
