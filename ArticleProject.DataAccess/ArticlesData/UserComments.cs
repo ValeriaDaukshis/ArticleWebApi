@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using ArticleProject.Models;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,12 @@ namespace ArticleProject.DataAccess.ArticlesData
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [BsonElement("user_name")]
-        public string UserName { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("user")]
+        public string UserId { get; set; }
 
         [BsonElement("comment_date")]
-        public DateTime CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
 
         [BsonElement("comment_text")]
         public string CommentText { get; set; }

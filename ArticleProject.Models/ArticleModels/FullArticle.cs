@@ -1,9 +1,10 @@
-﻿using ArticleProject.Models.CategoryModels;
-using System.Reflection.Metadata;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ArticleProject.Models.ArticleModels
 {
-    public class Article
+    public class FullArticle
     {
         public string Id { get; set; }
 
@@ -15,8 +16,8 @@ namespace ArticleProject.Models.ArticleModels
 
         public string CategoryName { get; set; }
 
-        public string UserId { get; set; }
+        public User User { get; set; }
 
-        public Comment[] Comments { get; set; }
+        public ResponseComment[] Comments { get; set; }
     }
 }

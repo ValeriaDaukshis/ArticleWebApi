@@ -10,7 +10,7 @@ import { User } from '../models/user';
 
 export class RegistrationPageComponent implements OnInit {
 
-  user = new User("", "", "", "");
+  user = new User("", "", "", "", "");
 
   constructor(
     private route: ActivatedRoute,
@@ -34,6 +34,18 @@ export class RegistrationPageComponent implements OnInit {
   }
   
   onRegistrate(user: User) {
-       this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize);
+    this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize);
   }
+
+  handleFileInput(files: FileList) {
+    const fileToUpload = files.item(0);
+    var reader = new FileReader();
+    reader.onload =this.handleFile.bind(this);
+    reader.readAsBinaryString(fileToUpload);
+  }
+
+  handleFile(event) {
+    var binaryString = event.target.result;
+    this.user.photo= btoa(binaryString);
+   }
 }

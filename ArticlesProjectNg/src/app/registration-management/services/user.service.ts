@@ -6,6 +6,8 @@ import { User } from '../models/user';
 import { VerifyUser } from '../models/verifyUser';
 import { retry, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { UserToken } from '../models/userToken';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,17 +15,16 @@ import { throwError } from 'rxjs';
 export class UserService {
   private url = environment.apiUrl + 'api/Users/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private router: Router,
+    ) { }
 
-  getUser(user: VerifyUser): Observable<User> {
-    return this.http.post<User>(`${this.url}${user.email}`, user)
-    .pipe(
-      catchError(this.handleError)
-    );
+  getUser(user: VerifyUser): Observable<UserToken> {
+    return this.http.post<UserToken>(`${this.url}${user.email}`, user);
   }
 
-  addCustomer(customer: User) : Observable<User> {
-    return this.http.post<User>(`${this.url}`, customer);
+  addCustomer(customer: User) : Observable<UserToken> {
+    return this.http.post<UserToken>(`${this.url}`, customer);
   }
 
   handleError(error: HttpErrorResponse) {
@@ -41,5 +42,10 @@ export class UserService {
 
   logOut(){
     localStorage.removeItem("registrate");
+    this.navigateToArticles();
+  }
+
+  navigateToArticles() {
+    this.router.navigate(['/articles']);
   }
 }

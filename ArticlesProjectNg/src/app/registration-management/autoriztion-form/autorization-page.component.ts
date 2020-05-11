@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { VerifyUser } from '../models/verifyUser';
 import { User } from '../models/user';
+import { UserStorage } from '../models/userStorage';
+import { UserToken } from '../models/userToken';
 
 @Component({
   selector: 'app-customer-form',
@@ -11,7 +13,7 @@ import { User } from '../models/user';
 
 export class AutorizationPageComponent implements OnInit {
 
-  user = new User("", "", "", "");
+  user = new UserStorage("", "", "");
   verifyUser : VerifyUser;
   
   isLoggedIn: Boolean;
@@ -39,7 +41,7 @@ export class AutorizationPageComponent implements OnInit {
     this.customerService.getUser(this.verifyUser).subscribe(c => this.setToStorage(c));
   }
 
-  setToStorage(c: User){
+  setToStorage(c: UserStorage){
     this.user = c;
     localStorage.setItem("registrate", JSON.stringify(this.user));
     this.navigateToArticles();

@@ -11,6 +11,7 @@ import { AutorizationPageComponent } from 'app/registration-management/autorizti
 import { ArticleListComponent } from 'app/articles-management/lists/article-list.component';
 import { ArticleFormComponent } from 'app/articles-management/forms/article-form.component';
 import { ArticleViewListComponent } from 'app/articles-management/lists/article-view-list.component';
+import { UserArticleListComponent } from 'app/cabinet-management/lists/user-article-list.component';
 
 import { UserService } from 'app/registration-management/services/user.service';
 import { ArticleService } from 'app/articles-management/services/article.service';
@@ -23,6 +24,8 @@ import { ArticleService } from 'app/articles-management/services/article.service
     ArticleListComponent,
     ArticleFormComponent,
     ArticleViewListComponent,
+    UserArticleListComponent,
+
   ],
   imports: [
     BrowserModule,

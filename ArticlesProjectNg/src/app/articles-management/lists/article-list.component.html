@@ -1,27 +1,29 @@
 <div class="container">
     <h2>Articles List</h2>
-    <div class="btn-toolbar" role="toolbar" aria-label="Action buttons">
-        <div class="btn-group" role="group" aria-label="New group" *ngIf='existed'>
-          <button routerLink="/articles" type="button" class="btn-danger">New Article</button>
-        </div>
-    </div>
     <div class="aside-btn">
-    <aside *ngFor = "let category of categories">
+    <aside>
+      <div *ngFor = "let category of categories">
         <div class="btn-group mr-2 mt-4" role="group" aria-label="Back group" (click)="getCategory(category.categoryName)">
             <button routerLink="/articles/category/{{category.categoryName}}" class="btn btn-primary">{{category.categoryName}}</button>
         </div>
+      </div>
+      <div class="btn-group mr-2 mt-4" role="group" aria-label="Back group">
+        <button routerLink="/articles" class="btn btn-primary">All</button>
+    </div>
     </aside>
     </div>
     <hr>
     <div *ngFor = "let article of articles">
         <h3>{{article.title}}</h3>
-        <p>{{article.id}}</p>
-        <p>{{article.createdDate}}</p>
-        <p>{{article.user.name}}</p>
-        <p>{{article.category.categoryName}}</p>
-        <div class="btn-group mr-2" role="group" aria-label="Back group">
-            <button routerLink="/articles/{{article.id}}" class="btn btn-primary">View</button>
-          </div>
+        <div class = "art-info">
+          <img [src]='article.photo'/>
+          <ul>
+            <li>Author: {{article.user.name}}</li>
+            <li>Category: {{article.categoryName}}</li>
+            <li class="clip">Comments: {{article.comments.length}}</li>
+            <li><a href = "/articles/{{article.id}}">Read more...</a></li>
+          </ul>
+        </div>
         <hr>
     </div>
   </div>

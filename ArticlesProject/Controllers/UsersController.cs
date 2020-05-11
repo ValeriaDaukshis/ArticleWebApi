@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
 using ArticleProject.Services;
+using ArticlesProject.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -54,14 +55,14 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createRequest)
+        public async Task<IActionResult> AddUser([FromBody] CreateUserRequest createRequest, [FromServices] IJwtSigningEncodingKey signingEncodingKey)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _service.CreateUser(createRequest);
+            var user = await _service.CreateUser(createRequest, signingEncodingKey);
             var location = string.Format("/api/users/{0}", user.Id);
             return Created(location, user);
         }
@@ -73,14 +74,14 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> LogIn(string email, [FromBody] VerifyUserRequest createRequest)
+        public async Task<IActionResult> LogIn(string email, [FromBody] VerifyUserRequest createRequest, [FromServices] IJwtSigningEncodingKey signingEncodingKey)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = await _service.LogIn(createRequest);
+            var user = await _service.LogIn(createRequest, signingEncodingKey);
 
             return Ok(user);
         }
@@ -92,14 +93,14 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.Conflict)]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> UpdateUser(string id, [FromBody] CreateUserRequest updateRequest)
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] CreateUserRequest updateRequest, [FromServices] IJwtSigningEncodingKey signingEncodingKey)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _service.UpdateUser(id, updateRequest);
+            await _service.UpdateUser(id, updateRequest, signingEncodingKey);
             return NoContent();
         }
 

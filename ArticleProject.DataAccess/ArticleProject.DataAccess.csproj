@@ -10,4 +10,8 @@
     <PackageReference Include="MongoDB.Driver.GridFS" Version="2.10.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ArticleProject.Models\ArticleProject.Models.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -12,13 +12,15 @@
       </div>
       <div class="form-group" >
         <label for="category" id="categoryLabel">Article category</label>
-        <select type="text" class="form-control" id="category" aria-describedby="categoryLabel" required [(ngModel)]="article.category.categoryName"
+        <select type="text" class="form-control" id="category" aria-describedby="categoryLabel" required [(ngModel)]="article.categoryName"
           name="category" #category="ngModel" >
               <option *ngFor = "let category of categories">{{category.categoryName}}</option>
         </select>
-        <div *ngIf="category.invalid && (category.dirty || category.touched)" class="alert alert-danger">
-          <div *ngIf="category.errors.required">Article category is required.</div>
-        </div>
+      </div>
+      <div class="form-group">
+        <label for="photo" id="photoLabel">Article photo</label>
+        <input #file type="file" (change)="handleFileInput($event.target.files)" class="form-control" id="photo" aria-describedby="photoLabel" minlength="6" maxlength="50" 
+         name="photo" accept=".jpeg,.png,.jpg">
       </div>
       <div class="form-group">
         <label for="description" id="descriptionLabel">Article description</label>
@@ -28,9 +30,6 @@
           <div *ngIf="description.errors.required">Article description is required.</div>
           <div *ngIf="description.errors.minlength">Article description must be at least 8 characters long.</div>
         </div>
-      </div>
-      <div class="btn-group mr-2" role="group" aria-label="Back group" (click)="onCancel()">
-        <button type="button" class="btn btn-primary">Back</button>
       </div>
       <div class="btn-group mr-2" role="group" aria-label="Save group" (click)="onSubmit(article)">
           <button type="button" class="btn btn-primary">Save</button>

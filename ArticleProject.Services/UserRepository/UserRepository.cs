@@ -3,10 +3,15 @@ using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
 using ArticleProject.Services.ExceptionClasses;
+using ArticlesProject.JWT;
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ArticleProject.Services.UserRepository
@@ -33,7 +38,7 @@ namespace ArticleProject.Services.UserRepository
             return users;
         }
 
-        public async Task<User> LogIn(VerifyUserRequest request)
+        public async Task<UserToken> LogIn(VerifyUserRequest request, IJwtSigningEncodingKey signingEncodingKey)
         {
             //request.Password = Crypto.ComputeSha256Hash(request.Password);
             var dbUsers = await _context.Users.Find(us => us.Email == request.Email && us.Password == request.Password).ToListAsync();
@@ -41,11 +46,21 @@ namespace ArticleProject.Services.UserRepository
             {
                 throw new CreateFailedException("Create failed. Change email");
             }
+            var u = _mapper.Map<User>(dbUsers[0]);
 
-            return _mapper.Map<UserDTO, User>(dbUsers[0]);
+            string token = CreateToken(u, signingEncodingKey);
+
+            UserToken user = new UserToken
+            {
+                Id = u.Id,
+                Token = token,
+                Name = u.Name,
+            };
+
+            return user;
         }
 
-        public async Task<User> GetUser(string id)
+        public async Task<ResponseUser> GetUser(string id)
         {
             var dbUsers = await _context.Users.Find(us => us.Id == id).ToListAsync();
             if (dbUsers.Count == 0)
@@ -53,10 +68,10 @@ namespace ArticleProject.Services.UserRepository
                 throw new NotFoundItemException("No user found");
             }
 
-            return _mapper.Map<UserDTO, User>(dbUsers[0]);
+            return _mapper.Map<UserDTO, ResponseUser>(dbUsers[0]);
         }
 
-        public async Task<User> CreateUser(CreateUserRequest createRequest)
+        public async Task<UserToken> CreateUser(CreateUserRequest createRequest, IJwtSigningEncodingKey signingEncodingKey)
         {
             //createRequest.Password = Crypto.ComputeSha256Hash(createRequest.Password);
             var dbUsers = await _context.Users.Find(us => us.Email == createRequest.Email && us.Password == createRequest.Password).ToListAsync();
@@ -68,11 +83,22 @@ namespace ArticleProject.Services.UserRepository
 
             var dbUser = _mapper.Map<CreateUserRequest, UserDTO>(createRequest);
             await _context.Users.InsertOneAsync(dbUser);
+            var u = _mapper.Map<User>(dbUser);
 
-            return _mapper.Map<User>(dbUser);
+            string token = CreateToken(u, signingEncodingKey);
+
+
+            UserToken user = new UserToken
+            {
+                Id = u.Id,
+                Token = token,
+                Name = u.Name,
+            };
+
+            return user;
         }
 
-        public async Task<User> UpdateUser(string id, CreateUserRequest updateRequest)
+        public async Task<UserToken> UpdateUser(string id, CreateUserRequest updateRequest, IJwtSigningEncodingKey signingEncodingKey)
         {
             var dbUsers = await _context.Users.Find(p => p.Email == updateRequest.Email && p.Id != id).ToListAsync();
             if (dbUsers.Count > 0)
@@ -91,8 +117,19 @@ namespace ArticleProject.Services.UserRepository
             _mapper.Map(updateRequest, dbUser);
 
             await _context.Users.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(id)), dbUser);
+            var u = _mapper.Map<User>(dbUser);
 
-            return _mapper.Map<User>(dbUser);
+            string token = CreateToken(u, signingEncodingKey);
+
+
+            UserToken user = new UserToken
+            {
+                Id = u.Id,
+                Token = token,
+                Name = u.Name,
+            };
+
+            return user;
         }
 
         public async Task RemoveUser(string id)
@@ -106,6 +143,28 @@ namespace ArticleProject.Services.UserRepository
             var dbUser = dbUsers[0];
 
             await _context.Users.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
+        }
+
+        private string CreateToken(User createRequest, IJwtSigningEncodingKey signingEncodingKey)
+        {
+            var claims = new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, createRequest.Name),
+                new Claim(ClaimTypes.Email, createRequest.Email),
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: "DemoApp",
+                audience: "DemoAppClient",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: new SigningCredentials(
+                        signingEncodingKey.GetKey(),
+                        signingEncodingKey.SigningAlgorithm)
+            );
+
+            string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+            return jwtToken;
         }
     }
 }

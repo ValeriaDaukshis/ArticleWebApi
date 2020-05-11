@@ -19,11 +19,7 @@ namespace ArticleProject.DataAccess
         [BsonElement("password")]
         public string Password { get; set; }
 
-        /* public string ImageId { get; set; } 
-
-         public bool HasImage()
-         {
-             return !String.IsNullOrWhiteSpace(ImageId);
-         }*/
+        [BsonElement("photo")]
+        public string Photo { get; set; }
     }
 }

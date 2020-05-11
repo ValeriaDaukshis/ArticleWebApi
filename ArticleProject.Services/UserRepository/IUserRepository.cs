@@ -1,5 +1,6 @@
 ﻿using ArticleProject.Models;
 using ArticleProject.Models.UserModels;
+using ArticlesProject.JWT;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,10 +9,10 @@ namespace ArticleProject.Services.UserRepository
     public interface IUserRepository
     {
         Task<IEnumerable<User>> GetUsers();
-        Task<User> GetUser(string request);
-        Task<User> CreateUser(CreateUserRequest user);
-        Task<User> UpdateUser(string id, CreateUserRequest user);
+        Task<ResponseUser> GetUser(string request);
+        Task<UserToken> CreateUser(CreateUserRequest user, IJwtSigningEncodingKey signingEncodingKey);
+        Task<UserToken> UpdateUser(string id, CreateUserRequest user, IJwtSigningEncodingKey signingEncodingKey);
         Task RemoveUser(string id);
-        Task<User> LogIn(VerifyUserRequest request);
+        Task<UserToken> LogIn(VerifyUserRequest request, IJwtSigningEncodingKey signingEncodingKey);
     }
 }

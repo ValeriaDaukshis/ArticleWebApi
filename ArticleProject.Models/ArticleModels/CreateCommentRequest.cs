@@ -6,7 +6,7 @@ namespace ArticleProject.Models.ArticleModels
 {
     public class CreateCommentRequest
     {
-        public string UserName { get; set; }
+        public string UserId { get; set; }
         public string CommentText { get; set; }
     }
 }

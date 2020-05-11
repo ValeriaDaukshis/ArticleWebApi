@@ -1,14 +1,40 @@
 .aside-btn {
     width: 200px;
     float: right;
+    margin-right: -100px;
 }
 
 aside button{
     font-size: large;
     width: 150px;
+    height: 50px;
     text-align: center;
 }
 
 .main-text{
     margin-bottom: 200px;
+}
+
+.art-info{
+    display: flex;
+    flex-direction: row;
+}
+
+.art-info ul{
+    margin-bottom: 0;
+}
+
+img {
+    width: 150px;
+    height: 150px;
+}
+
+.art-info li{
+    flex-direction: column;
+    list-style-type: none; 
+    margin-bottom: 15px;
+}
+
+.container h2 {
+    text-align: center;
 }

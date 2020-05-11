@@ -5,6 +5,8 @@ import { Observable, onErrorResumeNext } from 'rxjs';
 import { Article } from '../models/article';
 import { Category } from "../models/category";
 import { UserComment } from "../models/user-comment";
+import { ArticleBrief } from '../models/articleBrief';
+import { CommentBrief } from '../models/commentBrief';
 
 @Injectable({
   providedIn: 'root'
@@ -28,15 +30,27 @@ export class ArticleService {
     return this.http.get<Article>(`${this.articleUrl}${id}`);
   }
 
+  getArticlesByUserId(id: string): Observable<Array<Article>> {
+    return this.http.get<Array<Article>>(`${this.articleUrl}${id}/cabinet`);
+  }
+
   getCategory(name: string): Observable<Array<Article>> {
     return this.http.get<Array<Article>>(`${this.categoryTypeUrl}${name}`);
   }
 
-  addArticle(customer: Article) : Observable<Article> {
-    return this.http.post<Article>(`${this.articleUrl}`, customer);
+  addArticle(customer: ArticleBrief) : Observable<Object> {
+    return this.http.post<ArticleBrief>(`${this.articleUrl}`, customer);
   }
 
-  addComment(comment: UserComment, id: string) : Observable<UserComment>{
-    return this.http.post<UserComment>(`${this.articleUrl}${id}`, comment);
+  addComment(comment: CommentBrief, id: string) : Observable<Object>{
+    return this.http.post<CommentBrief>(`${this.articleUrl}${id}`, comment);
+  }
+
+  deleteArticle(id: string) : Observable<Object>{
+    return this.http.delete<Object>(`${this.articleUrl}${id}`);
+  }
+
+  updateArticle(id: string, article: ArticleBrief): Observable<Object>{
+    return this.http.put<ArticleBrief>(`${this.articleUrl}${id}`, article);
   }
 }

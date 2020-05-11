@@ -5,6 +5,7 @@ import { AutorizationPageComponent } from 'app/registration-management/autorizti
 import { ArticleListComponent } from 'app/articles-management/lists/article-list.component';
 import { ArticleFormComponent } from 'app/articles-management/forms/article-form.component';
 import { ArticleViewListComponent } from 'app/articles-management/lists/article-view-list.component';
+import { UserArticleListComponent } from 'app/cabinet-management/lists/user-article-list.component';
 
 
 const routes: Routes = [
@@ -13,8 +14,10 @@ const routes: Routes = [
   { path: 'autorization', component: AutorizationPageComponent },
   { path: 'articles', component: ArticleListComponent },
   { path: 'articles/category/:categoryName', component: ArticleListComponent },
-  { path: 'articles', component: ArticleFormComponent },
+  { path: 'article', component: ArticleFormComponent },
   { path: 'articles/:id', component: ArticleViewListComponent },
+  { path: 'article/:id', component: ArticleFormComponent },
+  { path: 'cabinet/:id', component: UserArticleListComponent },
 ];
 
 @NgModule({

@@ -13,22 +13,22 @@ namespace ArticleProject.Services.ArticleService
         {
             _repository = repository;
         }
-        public async Task<Article> CreateArticle(UpdateArticleRequest createRequest)
+        public async Task<ResponseArticle> CreateArticle(UpdateArticleRequest createRequest)
         {
             return await _repository.CreateArticle(createRequest);
         }
 
-        public async Task<Article> GetArticle(string id)
+        public async Task<ResponseArticle> GetArticle(string id)
         {
             return await _repository.GetArticle(id);
         }
 
-        public async Task<IEnumerable<Article>> GetArticles()
+        public async Task<IEnumerable<ResponseArticle>> GetArticles()
         {
             return await _repository.GetArticles();
         }
 
-        public async Task<IEnumerable<Article>> GetArticlesCategory(string categoryName)
+        public async Task<IEnumerable<ResponseArticle>> GetArticlesCategory(string categoryName)
         {
             return await _repository.GetArticlesCategory(categoryName);
         }
@@ -38,19 +38,24 @@ namespace ArticleProject.Services.ArticleService
             await _repository.RemoveArticle(id);
         }
 
-        public async Task<Article> UpdateArticle(string id, UpdateArticleRequest updateRequest)
+        public async Task<ResponseArticle> UpdateArticle(string id, UpdateArticleRequest updateRequest)
         {
             return await _repository.UpdateArticle(id, updateRequest);
         }
 
-        public async Task<Comment> CreateArticleComment(string id, CreateCommentRequest createRequest)
+        public async Task<ResponseComment> CreateArticleComment(string id, CreateCommentRequest createRequest)
         {
             return await _repository.CreateArticleComment(id, createRequest);
         }
 
-        public async Task<IEnumerable<Comment>> GetArticleComments(string id)
+        public async Task<IEnumerable<ResponseComment>> GetArticleComments(string id)
         {
             return await _repository.GetArticleComments(id);
+        }
+
+        public async Task<IEnumerable<ResponseArticle>> GetArticlesByUserId(string id)
+        {
+            return await _repository.GetArticlesByUserId(id);
         }
     }
 }

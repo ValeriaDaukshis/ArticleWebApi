@@ -55,6 +55,18 @@ namespace ArticlesProject.Controllers
         }
 
         [HttpGet]
+        [Route("{id}/cabinet")]
+        [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a article by id.", Type = typeof(Article))]
+        [SwaggerResponse(HttpStatusCode.NotFound)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+
+        public async Task<IActionResult> GetArticlesByUserId(string id)
+        {
+            var article = await _service.GetArticlesByUserId(id);
+            return Ok(article);
+        }
+
+        [HttpGet]
         [Route("{id}/comments")]
         [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a article by id.", Type = typeof(Article))]
         [SwaggerResponse(HttpStatusCode.NotFound)]

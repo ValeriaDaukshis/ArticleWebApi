@@ -9,6 +9,7 @@ using ArticleProject.Services.CategoryRepository;
 using ArticleProject.Services.UserRepository;
 using ArticleProject.Services.UserServices;
 using ArticlesProject.DataAccess;
+using ArticlesProject.JWT;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -59,7 +60,6 @@ namespace ArticlesProject
             services.AddTransient<IArticleService, ArticleService>();
             services.AddTransient<IArticleContext, ArticleContext>();
             services.AddTransient<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
-
             services.AddTransient<IArticleRepository, ArticleRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
@@ -75,30 +75,34 @@ namespace ArticlesProject
                 options.Database = Configuration.GetSection("MongoConnection:Database").Value;
             });
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
-            services.AddAuthentication(options =>
-            {
-                //Set default Authentication Schema as Bearer
-                options.DefaultAuthenticateScheme =
-                           JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme =
-                           JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme =
-                           JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(cfg =>
-            {
-                cfg.RequireHttpsMetadata = false;
-                cfg.SaveToken = true;
-                cfg.TokenValidationParameters =
-                       new TokenValidationParameters
-                       {
-                           ValidIssuer = Configuration["JwtIssuer"],
-                           ValidAudience = Configuration["JwtIssuer"],
-                           IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                           ClockSkew = TimeSpan.Zero
-                       };
-            });
+            const string signingSecurityKey = "0d5b3235a8b403c3dab9c3f4f65c07fcalskd234n1k41230";
+            var signingKey = new SigningSymmetricKey(signingSecurityKey);
+            services.AddSingleton<IJwtSigningEncodingKey>(signingKey);
+
+            const string jwtSchemeName = "JwtBearer";
+            var signingDecodingKey = (IJwtSigningDecodingKey)signingKey;
+            services
+                .AddAuthentication(options => {
+                    options.DefaultAuthenticateScheme = jwtSchemeName;
+                    options.DefaultChallengeScheme = jwtSchemeName;
+                })
+                .AddJwtBearer(jwtSchemeName, jwtBearerOptions => {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = signingDecodingKey.GetKey(),
+
+                        ValidateIssuer = true,
+                        ValidIssuer = "DemoApp",
+
+                        ValidateAudience = true,
+                        ValidAudience = "DemoAppClient",
+
+                        ValidateLifetime = true,
+
+                        ClockSkew = TimeSpan.FromSeconds(3600)
+                    };
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -113,6 +117,7 @@ namespace ArticlesProject
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+            app.UseAuthentication();
             //app.UseHttpsRedirection();
 
             app.UseRouting();

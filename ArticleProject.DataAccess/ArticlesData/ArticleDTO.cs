@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace ArticleProject.DataAccess.ArticlesData
@@ -14,17 +15,21 @@ namespace ArticleProject.DataAccess.ArticlesData
         [BsonElement("title")]
         public string Title { get; set; }
 
+        [BsonElement("photo")]
+        public string Photo { get; set; }
+
         [BsonElement("created_date")]
         public string CreatedDate { get; set; }
 
         [BsonElement("description")]
         public string Description { get; set; }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement("created_user")]
-        public UserDTO User { get; set; }
+        public string UserId { get; set; }
 
-        [BsonElement("category")]
-        public CategoryDTO Category { get; set; }
+        [BsonElement("category_name")]
+        public string CategoryName { get; set; }
 
         [BsonElement("comments")]
         public UserComments[] Comments { get; set; }

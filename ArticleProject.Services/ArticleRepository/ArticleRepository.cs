@@ -2,6 +2,7 @@
 using ArticleProject.DataAccess.ArticlesData;
 using ArticleProject.DataAccess.UsersData;
 using ArticleProject.Models.ArticleModels;
+using ArticleProject.Models.UserModels;
 using ArticleProject.Services.ExceptionClasses;
 using AutoMapper;
 using MongoDB.Bson;
@@ -9,7 +10,6 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 
 namespace ArticleProject.Services.ArticleRepository
 {
@@ -27,19 +27,19 @@ namespace ArticleProject.Services.ArticleRepository
             _userContext = userContext;
             _categoryContext = categoryContext;
         }
-        public async Task<Article> CreateArticle(UpdateArticleRequest createRequest)
+        public async Task<ResponseArticle> CreateArticle(UpdateArticleRequest createRequest)
         {
-            if (createRequest.User is null)
+            if (createRequest.UserId is null)
             {
                 throw new ArgumentException("No user");
             }
 
 
             var dbArticles = await _context.Articles.Find(h => h.Title == createRequest.Title).ToListAsync();
-            var dbCategory = await _categoryContext.Categories.Find(c => c.CategoryName == createRequest.Category.CategoryName).FirstOrDefaultAsync();
+            var dbCategory = await _categoryContext.Categories.Find(c => c.CategoryName == createRequest.CategoryName).FirstOrDefaultAsync();
             //!!!!!!!!!!!!!!!!!!
             // look here if smth wrong
-            var dbUser = await _userContext.Users.Find(c => c.Name == createRequest.User.Name && c.Email == createRequest.User.Email && c.Password == createRequest.User.Password).FirstOrDefaultAsync();
+            var dbUser = await _userContext.Users.Find(new BsonDocument("_id", new ObjectId(createRequest.UserId))).ToListAsync();
 
             if (dbArticles.Count > 0)
             {
@@ -57,15 +57,14 @@ namespace ArticleProject.Services.ArticleRepository
             }
 
             var dbArticle = _mapper.Map<UpdateArticleRequest, ArticleDTO>(createRequest);
-            dbArticle.Category = _mapper.Map(createRequest.Category, dbCategory);
-            dbArticle.User = _mapper.Map(createRequest.User, dbUser);
 
             await _context.Articles.InsertOneAsync(dbArticle);
 
-            return _mapper.Map<Article>(dbArticle);
+            var article = await GetFullUserInfo(dbArticle);
+            return article;
         }
 
-        public async Task<Article> GetArticle(string id)
+        public async Task<ResponseArticle> GetArticle(string id)
         {
             var dbArticles = await _context.Articles.Find(new BsonDocument("_id", new ObjectId(id))).ToListAsync();
             if (dbArticles.Count == 0)
@@ -73,35 +72,55 @@ namespace ArticleProject.Services.ArticleRepository
                 throw new NotFoundItemException("Article not found");
             }
 
-            return _mapper.Map<ArticleDTO, Article>(dbArticles[0]);
+            var article = await GetFullUserInfo(dbArticles[0]);
+            return article;
         }
 
-        public async Task<IEnumerable<Comment>> GetArticleComments(string id)
+        public async Task<IEnumerable<ResponseArticle>> GetArticlesByUserId(string id)
+        {
+            var dbArticles = await _context.Articles.Find(new BsonDocument("created_user", new ObjectId(id))).ToListAsync();
+            if (dbArticles.Count == 0)
+            {
+                throw new NotFoundItemException("Article not found");
+            }
+            var articles = new List<ResponseArticle>();
+            foreach (var art in dbArticles)
+            {
+                var article = await GetFullUserInfo(art);
+                articles.Add(article);
+            }
+
+            return articles;
+        }
+
+        public async Task<IEnumerable<ResponseComment>> GetArticleComments(string id)
         {
             var article = await GetArticle(id);
 
             return article.Comments;
         }
 
-        public async Task<IEnumerable<Article>> GetArticles()
+        public async Task<IEnumerable<ResponseArticle>> GetArticles()
         {
             var dbArticles = await _context.Articles.Find(_ => true).ToListAsync();
-            var articles = new List<Article>();
+            var articles = new List<ResponseArticle>();
             foreach (var art in dbArticles)
             {
-                articles.Add(_mapper.Map<Article>(art));
+                var article = await GetFullUserInfo(art);
+                articles.Add(article);
             }
 
             return articles;
         }
 
-        public async Task<IEnumerable<Article>> GetArticlesCategory(string categoryName)
+        public async Task<IEnumerable<ResponseArticle>> GetArticlesCategory(string categoryName)
         {
-            var dbArticles = await _context.Articles.Find(c => c.Category.CategoryName == categoryName).ToListAsync();
-            var articles = new List<Article>();
+            var dbArticles = await _context.Articles.Find(c => c.CategoryName == categoryName).ToListAsync();
+            var articles = new List<ResponseArticle>();
             foreach (var art in dbArticles)
             {
-                articles.Add(_mapper.Map<Article>(art));
+                var article = await GetFullUserInfo(art);
+                articles.Add(article);
             }
 
             return articles;
@@ -120,9 +139,9 @@ namespace ArticleProject.Services.ArticleRepository
             await _context.Articles.DeleteOneAsync(new BsonDocument("_id", new ObjectId(id)));
         }
 
-        public async Task<Article> UpdateArticle(string id, UpdateArticleRequest updateRequest)
+        public async Task<ResponseArticle> UpdateArticle(string id, UpdateArticleRequest updateRequest)
         {
-            if (updateRequest.User is null)
+            if (updateRequest.UserId is null)
             {
                 throw new ArgumentException("No user");
             }
@@ -134,8 +153,8 @@ namespace ArticleProject.Services.ArticleRepository
             }
             //!!!!!!!!!!!!!!!!!!
             // look here if smth wrong
-            var dbCategory = await _categoryContext.Categories.Find(c => c.CategoryName == updateRequest.Category.CategoryName).FirstOrDefaultAsync();
-            var dbUser = await _userContext.Users.Find(c => c.Name == updateRequest.User.Name && c.Email == updateRequest.User.Email && c.Password == updateRequest.User.Password).FirstOrDefaultAsync();
+            var dbCategory = await _categoryContext.Categories.Find(c => c.CategoryName == updateRequest.CategoryName).FirstOrDefaultAsync();
+            var dbUser = await _userContext.Users.Find(new BsonDocument("_id", new ObjectId(updateRequest.UserId))).ToListAsync();
 
             dbArticles = _context.Articles.Find(p => p.Id == id).ToList();
 
@@ -157,33 +176,57 @@ namespace ArticleProject.Services.ArticleRepository
             var dbArticle = dbArticles[0];
 
             _mapper.Map(updateRequest, dbArticle);
-            _mapper.Map(updateRequest.Category, dbCategory);
-            _mapper.Map(updateRequest.User, dbUser);
 
             await _context.Articles.ReplaceOneAsync(new BsonDocument("_id", new ObjectId(id)), dbArticle);
 
-            return _mapper.Map<Article>(dbArticle);
+            var article = await GetFullUserInfo(dbArticle);
+            return article;
         }
 
-        public async Task<Comment> CreateArticleComment(string id, CreateCommentRequest createRequest)
+        public async Task<ResponseComment> CreateArticleComment(string id, CreateCommentRequest createRequest)
         {
-            if (createRequest.UserName is null)
+            if (createRequest.UserId is null)
             {
                 throw new NotFoundItemException("User not found");
             }
 
-            var dbArticle = _mapper.Map<CreateCommentRequest, UserComments>(createRequest);
+            var dbComment = _mapper.Map<CreateCommentRequest, UserComments>(createRequest);
 
             var filter = Builders<ArticleDTO>
              .Filter.Eq(e => e.Id, id);
 
             var update = Builders<ArticleDTO>.Update
-                    .Push<UserComments>(e => e.Comments, dbArticle);
+                    .Push<UserComments>(e => e.Comments, dbComment);
 
             await _context.Articles.FindOneAndUpdateAsync(filter, update);
 
-            var a = _mapper.Map<Comment>(dbArticle);
+            var a = await GetFullCommentInfo(dbComment);
             return a;
+        }
+
+        private async Task<ResponseArticle> GetFullUserInfo(ArticleDTO art)
+        {
+            var article = _mapper.Map<ResponseArticle>(art);
+            var user = await _userContext.Users.Find(c => c.Id == art.UserId).FirstOrDefaultAsync();
+            article.User = _mapper.Map<ResponseUser>(user);
+            List<ResponseComment> responseComments = new List<ResponseComment>();
+
+            foreach (var comment in art.Comments)
+            {
+                var com = await GetFullCommentInfo(comment);
+                responseComments.Add(com);
+            }
+            article.Comments = responseComments.ToArray();
+
+            return article;
+        }
+
+        private async Task<ResponseComment> GetFullCommentInfo(UserComments comment)
+        {
+            var com = _mapper.Map<ResponseComment>(comment);
+            var commentUser = await _userContext.Users.Find(c => c.Id == comment.UserId).FirstOrDefaultAsync();
+            com.User = _mapper.Map<ResponseUser>(commentUser);
+            return com;
         }
 
         private string GetCategoryId(string name)

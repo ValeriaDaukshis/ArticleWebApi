@@ -1,5 +1,6 @@
 ﻿using ArticleProject.Models.CategoryModels;
 using System;
+using System.Reflection.Metadata;
 
 namespace ArticleProject.Models.ArticleModels
 {
@@ -7,8 +8,9 @@ namespace ArticleProject.Models.ArticleModels
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public UpdateCategoryRequest Category { get; set; }
-        public CreateUserRequest User { get; set; }
+        public string Photo { get; set; }
+        public string CategoryName { get; set; }
+        public string UserId { get; set; }
         public CreateCommentRequest[] Comments => Array.Empty<CreateCommentRequest>();
     }
 }

@@ -24,7 +24,7 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a list of article categories.", Type = typeof(Category[]))]
         [SwaggerResponse(HttpStatusCode.BadRequest)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetCategories()
         {
             var categories = await _service.GetCategories();
             return Ok(categories);
@@ -35,28 +35,10 @@ namespace ArticlesProject.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Returns a category by id.", Type = typeof(Category))]
         [SwaggerResponse(HttpStatusCode.NotFound)]
         [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> GetCategory(string id)
         {
             var category = await _service.GetCategory(id);
             return Ok(category);
-        }
-
-        [HttpPost]
-        [Route("")]
-        [SwaggerResponse(HttpStatusCode.Created, Description = "Creates a new user.")]
-        [SwaggerResponse(HttpStatusCode.BadRequest)]
-        [SwaggerResponse(HttpStatusCode.Conflict)]
-        [SwaggerResponse(HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddUser([FromBody] UpdateCategoryRequest createRequest)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var category = await _service.CreateCategory(createRequest);
-            var location = string.Format("/api/categories/{0}", category.Id);
-            return Created(location, category);
         }
 
         [HttpPut]
