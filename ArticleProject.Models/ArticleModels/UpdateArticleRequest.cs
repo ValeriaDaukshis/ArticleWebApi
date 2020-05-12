@@ -11,6 +11,6 @@ namespace ArticleProject.Models.ArticleModels
         public string Photo { get; set; }
         public string CategoryName { get; set; }
         public string UserId { get; set; }
-        public CreateCommentRequest[] Comments => Array.Empty<CreateCommentRequest>();
+        public CreateCommentRequest[] Comments { get; set; }
     }
 }

@@ -34,6 +34,9 @@
       <div class="btn-group mr-2" role="group" aria-label="Save group" (click)="onSubmit(article)">
           <button type="button" class="btn btn-primary">Save</button>
       </div>
+      <div class="btn-group mr-2" role="group" aria-label="Finish group" (click)="delete(article.id)">
+        <button type="button" class="btn btn-danger">Delete</button>
+    </div>
     </form>
   </div>
   

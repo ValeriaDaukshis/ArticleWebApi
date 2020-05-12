@@ -26,7 +26,7 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   navigateToAutorize() {
-    this.router.navigate(['/autorization']);
+    this.router.navigate(['autorization']);
   }
 
   onCancel() {
@@ -34,7 +34,8 @@ export class RegistrationPageComponent implements OnInit {
   }
   
   onRegistrate(user: User) {
-    this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize);
+    console.log(user);
+    this.customerService.addCustomer(user).subscribe(c => this.navigateToAutorize());
   }
 
   handleFileInput(files: FileList) {
@@ -45,6 +46,7 @@ export class RegistrationPageComponent implements OnInit {
   }
 
   handleFile(event) {
+    console.log("in event");
     var binaryString = event.target.result;
     this.user.photo= btoa(binaryString);
    }

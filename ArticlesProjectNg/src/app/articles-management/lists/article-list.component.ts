@@ -28,6 +28,7 @@ export class ArticleListComponent implements OnInit {
       ) { }
 
     ngOnInit() {
+      console.log("a");
       var item = localStorage.getItem("registrate");
       if ( item !== null) {
           this.existed = true;
@@ -50,7 +51,6 @@ export class ArticleListComponent implements OnInit {
       this.articles.forEach(element => {
         element.photo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' 
                  + element.photo);
-        console.log(element.comments.length);
       });
     }
 }

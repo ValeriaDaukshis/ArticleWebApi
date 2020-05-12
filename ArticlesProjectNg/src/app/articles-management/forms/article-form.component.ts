@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from '../services/article.service';
 import { Article } from '../models/article';
 import { Category } from "../models/category";
-import { User } from 'app/registration-management/models/user';
 import { UserStorage } from 'app/registration-management/models/userStorage';
 import { ArticleBrief } from '../models/articleBrief';
+import { CommentBrief } from '../models/commentBrief';
 
 
 @Component({
@@ -54,9 +54,15 @@ export class ArticleFormComponent implements OnInit {
     console.log(customer);
     let artBrief: ArticleBrief = this.mapToArticleBrief(customer);
     if(this.existed)
-      this.customerService.updateArticle(artBrief.id, artBrief).subscribe(c => this.navigateToCustomers);
+      this.customerService.updateArticle(artBrief.id, artBrief).subscribe(c => this.navigateToCustomers());
     else
-      this.customerService.addArticle(artBrief).subscribe(c => this.navigateToCustomers);
+      this.customerService.addArticle(artBrief).subscribe(c => this.navigateToCustomers());
+  }
+
+  delete(id: string){
+    this.customerService.deleteArticle(id).subscribe(h => {
+      this.navigateToCustomers();
+    });
   }
 
   mapToArticleBrief(article: Article): ArticleBrief{
@@ -67,6 +73,14 @@ export class ArticleFormComponent implements OnInit {
     artBrief.description = article.description;
     artBrief.photo =article.photo;
     artBrief.userId = this.user.id;
+    let com = [];
+    article.comments.forEach(element => {
+      com.push(new CommentBrief(element.user.id, element.commentText));
+      
+    });
+    artBrief.comments = com;
+
+    console.log(artBrief);
 
     return artBrief;
 

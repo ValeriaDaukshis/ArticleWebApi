@@ -44,7 +44,7 @@ namespace ArticleProject.Services.UserRepository
             var dbUsers = await _context.Users.Find(us => us.Email == request.Email && us.Password == request.Password).ToListAsync();
             if (dbUsers.Count == 0)
             {
-                throw new CreateFailedException("Create failed. Change email");
+                throw new CreateFailedException("Incorrect email or password");
             }
             var u = _mapper.Map<User>(dbUsers[0]);
 

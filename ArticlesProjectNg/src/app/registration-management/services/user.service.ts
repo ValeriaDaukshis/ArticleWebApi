@@ -28,15 +28,17 @@ export class UserService {
   }
 
   handleError(error: HttpErrorResponse) {
-    let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
-      // client-side error
-      errorMessage = `Error: ${error.error.message}`;
+      // A client-side or network error occurred. Handle it accordingly.
+      alert('An error occurred:'+ error.error.message);
     } else {
-      // server-side error
-      errorMessage = `Error ${error.message}`;
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      alert(error.error);
+      // console.error(
+      //   `Backend returned code ${error.status}, ` +
+      //   `body was: ${error.error}`);
     }
-    window.alert(errorMessage);
     return throwError(error);
   }
 

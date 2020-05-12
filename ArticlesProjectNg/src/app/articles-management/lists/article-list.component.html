@@ -4,11 +4,11 @@
     <aside>
       <div *ngFor = "let category of categories">
         <div class="btn-group mr-2 mt-4" role="group" aria-label="Back group" (click)="getCategory(category.categoryName)">
-            <button routerLink="/articles/category/{{category.categoryName}}" class="btn btn-primary">{{category.categoryName}}</button>
+            <button class="btn btn-primary">{{category.categoryName}}</button>
         </div>
       </div>
-      <div class="btn-group mr-2 mt-4" role="group" aria-label="Back group">
-        <button routerLink="/articles" class="btn btn-primary">All</button>
+      <div class="btn-group mr-2 mt-4" role="group" aria-label="Back group" (click)="showAll()">
+        <button class="btn btn-primary">All</button>
     </div>
     </aside>
     </div>

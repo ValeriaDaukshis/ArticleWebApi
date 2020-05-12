@@ -3,6 +3,7 @@ import { UserService } from './registration-management/services/user.service';
 import { Router } from '@angular/router';
 import { UserToken } from './registration-management/models/userToken';
 import { UserStorage } from './registration-management/models/userStorage';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit{
 
   user: UserStorage;
   existed = false;
+  isModalDialogVisible: boolean = false;
 
   ngOnInit() {
     let item = localStorage.getItem("registrate");
@@ -31,7 +33,11 @@ export class AppComponent implements OnInit{
 
   logout() {
     this.service.logOut();
-    alert("you logOut");
+    this.navigateToArticles();
+  }
+
+  navigateToArticles() {
+    this.router.navigate(['/articles']);
   }
 
   cabinet(){
@@ -42,7 +48,7 @@ export class AppComponent implements OnInit{
         this.navigateToCabinet();
         return;
       }
-    alert("authorize");
+    alert('You are not authorized user!');
     this.existed = false;
   }
 

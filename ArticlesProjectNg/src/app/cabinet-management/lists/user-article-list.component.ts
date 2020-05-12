@@ -22,18 +22,23 @@ export class UserArticleListComponent implements OnInit {
 
   constructor(
       private articleService: ArticleService,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      private route: ActivatedRoute,
+      private router: Router,
       ) { }
 
     ngOnInit() {
       var item = localStorage.getItem("registrate");
       this.user = JSON.parse(item);
-      console.log(this.user);
       this.showAll();
     }
 
     showAll(){
         this.articleService.getArticlesByUserId(this.user.id).subscribe(h => this.getFile(h));
+    }
+
+    navigateToCustomers() {
+      this.router.navigate(['/cabinet/{{this.article.user.id}}']);
     }
 
     getFile(art: Article[]){
@@ -43,9 +48,5 @@ export class UserArticleListComponent implements OnInit {
         + element.photo);
 
       });
-    }
-
-    delete(id: string){
-      this.articleService.deleteArticle(id).subscribe(h => this.showAll());
     }
 }

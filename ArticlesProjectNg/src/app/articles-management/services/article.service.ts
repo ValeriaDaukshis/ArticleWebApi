@@ -39,6 +39,7 @@ export class ArticleService {
   }
 
   addArticle(customer: ArticleBrief) : Observable<Object> {
+    console.log(customer);
     return this.http.post<ArticleBrief>(`${this.articleUrl}`, customer);
   }
 
@@ -47,6 +48,7 @@ export class ArticleService {
   }
 
   deleteArticle(id: string) : Observable<Object>{
+    console.log(id);
     return this.http.delete<Object>(`${this.articleUrl}${id}`);
   }
 
